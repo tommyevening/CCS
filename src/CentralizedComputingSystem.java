@@ -18,8 +18,8 @@ public class CentralizedComputingSystem {
     public CentralizedComputingSystem(int port) throws IOException {
         this.port = port;
         this.statisticsManager = new StatisticsManager();
-        // Ograniczenie puli wątków do kontrolowanej liczby
-        this.clientThreadPool = Executors.newFixedThreadPool(50);
+        int processors = Runtime.getRuntime().availableProcessors();
+        this.clientThreadPool = Executors.newFixedThreadPool(processors * 4);
         this.tcpServerSocket = new ServerSocket(port);
         this.udpServer = new UDPDiscoveryServer(port);
 
