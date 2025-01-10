@@ -16,6 +16,7 @@ class StatisticsManager {
     private AtomicInteger recentResultSum = new AtomicInteger(0);
 
     public StatisticsManager() {
+        // Inicjalizuje statystyki dla operacji
         for (String op : Arrays.asList("ADD", "SUB", "MUL", "DIV")) {
             operationCounts.put(op, new AtomicInteger(0));
             recentOperationCounts.put(op, new AtomicInteger(0));
@@ -23,25 +24,28 @@ class StatisticsManager {
     }
 
     public void recordClientConnection() {
-        totalClients.incrementAndGet();
+        totalClients.incrementAndGet(); // Zwiększa licznik klientów
     }
 
     public void recordOperation(String operation, int result) {
-        totalOperations.incrementAndGet();
-        operationCounts.get(operation).incrementAndGet();
-        resultSum.addAndGet(result);
+        //Operacje całkowite
+        totalOperations.incrementAndGet(); // Zwiększa licznik operacji
+        operationCounts.get(operation).incrementAndGet(); // Zwiększa licznik dla danej operacji
+        resultSum.addAndGet(result); // Dodaje wynik do sumy
 
-        recentOperations.incrementAndGet();
-        recentOperationCounts.get(operation).incrementAndGet();
-        recentResultSum.addAndGet(result);
+        //Operacje ostatnie 10 sekund
+        recentOperations.incrementAndGet(); // Zwiększa licznik operacji
+        recentOperationCounts.get(operation).incrementAndGet(); // Zwiększa licznik dla danej operacji
+        recentResultSum.addAndGet(result); // Dodaje wynik do sumy
     }
 
     public void recordErrorOperation() {
-        errorOperations.incrementAndGet();
-        recentErrorOperations.incrementAndGet();
+        errorOperations.incrementAndGet(); // Zwiększa licznik błędnych operacji
+        recentErrorOperations.incrementAndGet(); // Zwiększa licznik błędnych operacji w ostatnich 10 sekundach
     }
 
     public void printStatistics() {
+        // Wypisuje statystyki całkowite i statystyki z ostatnich 10 sekund
         System.out.println("\n--- Statystyki całkowite ---");
         System.out.println("Liczba klientów: " + totalClients.get());
         System.out.println("Całkowita liczba operacji: " + totalOperations.get());
@@ -65,6 +69,7 @@ class StatisticsManager {
     }
 
     private void resetRecentStatistics() {
+        // Resetuje statystyki z ostatnich 10 sekund
         recentOperations.set(0);
         recentErrorOperations.set(0);
         recentResultSum.set(0);

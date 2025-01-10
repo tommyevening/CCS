@@ -24,31 +24,35 @@ class ClientRequestHandler {
     }
 
     public void handleConnection() {
+        // Obsługuje połączenie z klientem, odbierając i przetwarzając polecenia.
         try {
             String inputLine;
             while ((inputLine = readMessage()) != null) {
                 inputLine = inputLine.trim();
                 if (inputLine.isEmpty()) continue;
 
+                // Przetwarza polecenie i wysyła wynik do klienta.
                 String result = processCommand(inputLine);
                 sendMessage(result);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            // Zamyka połączenie z klientem po zakończeniu obsługi.
             closeConnection();
         }
     }
 
     private String readMessage() {
+        // Odczytuje wiadomość od klienta, blokując operacje IO dla bezpieczeństwa.
         ioLock.lock();
         try {
             return in.readLine();
         } catch (SocketException e) {
+            // Informuje o rozłączeniu klienta.
             System.out.println("Klient rozłączony: " + clientSocket.getInetAddress() + ":" + clientSocket.getPort() + " - " + e.getMessage());
             return null;
-        }
-    catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         } finally {
@@ -57,6 +61,7 @@ class ClientRequestHandler {
     }
 
     private void sendMessage(String message) {
+        // Wysyła wiadomość do klienta, blokując operacje IO dla bezpieczeństwa.
         ioLock.lock();
         try {
             out.println(message);
@@ -67,6 +72,7 @@ class ClientRequestHandler {
     }
 
     private void closeConnection() {
+        // Zamyka strumienie i gniazdo połączenia z klientem.
         ioLock.lock();
         try {
             if (in != null) in.close();
@@ -80,6 +86,7 @@ class ClientRequestHandler {
     }
 
     private String processCommand(String command) {
+        // Przetwarza polecenie matematyczne i zwraca wynik lub komunikat o błędzie.
         try {
             String[] parts = command.split("\\s+");
             if (parts.length != 3) {
@@ -90,15 +97,13 @@ class ClientRequestHandler {
             int arg1 = Integer.parseInt(parts[1]);
             int arg2 = Integer.parseInt(parts[2]);
 
+            // Wykonuje operację matematyczną i aktualizuje statystyki.
             int result = operationFactory.performOperation(operation, arg1, arg2);
-
-            // Synchronizowana aktualizacja statystyk
             synchronized (statisticsManager) {
                 statisticsManager.recordOperation(operation, result);
             }
 
             System.out.println("Operacja: " + command + ", Wynik: " + result);
-
             return String.valueOf(result);
         } catch (NumberFormatException e) {
             return handleError("INVALID_NUMBERS");
@@ -110,6 +115,7 @@ class ClientRequestHandler {
     }
 
     private String handleError(String errorType) {
+        // Rejestruje błąd operacji i zwraca komunikat o błędzie.
         synchronized (statisticsManager) {
             statisticsManager.recordErrorOperation();
         }
