@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CSS:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/CSS_jar2</output-path>
+    <root id="archive" name="CSS.jar">
+      <element id="module-output" name="CSS" />
+    </root>
+  </artifact>
+</component>
